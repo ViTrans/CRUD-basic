@@ -1,3 +1,9 @@
 {
-  "courses": []
+  "courses": [
+    {
+      "name": "javaScript 3",
+      "giatien": "4000",
+      "id": 1
+    }
+  ]
 }

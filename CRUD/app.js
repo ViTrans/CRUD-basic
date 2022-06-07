@@ -35,19 +35,55 @@ function deleteCourses(id) {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then(function (response) {
-    return response.json();
-  });
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (response) {
+      let courseItem = document.querySelector(".course-item-" + id);
+      if (courseItem) {
+        courseItem.remove();
+      }
+    });
 }
 
-function handleEditCourse(id) {}
+function handleEditCourse(id, callback) {
+  let nameContent = document.querySelector(`.title-${id}`).textContent;
+  let giatienContent = document.querySelector(`.giatien-${id}`).textContent;
+  let name = document.querySelector('input[name="name"]');
+  let giatien = document.querySelector('input[name="giatien"]');
+  name.value = nameContent;
+  giatien.value = giatienContent;
+
+  if (handleEditCourse) {
+    creatBtn = document.querySelector("#update");
+    creatBtn.onclick = function () {
+      option = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.value,
+          giatien: giatien.value,
+        }),
+      };
+      fetch(courseApi + "/" + id, option)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(callback);
+    };
+  }
+}
 function renderCourses(courses) {
   let listCourses = document.querySelector(".list-courses");
   let htmls = courses.map(function (course) {
-    return `<tr>
+    return `<tr class="course-item-${course.id}">
     <td scope="row">${course.id}</td>
-    <td>${course.name}</td>
-    <td>${course.giatien} <button onclick="deleteCourses(${course.id})" class="btn btn-danger">Xoa</button> <button onclick="handleEditCourse(${course.id})" class="btn btn-success">sua</button></td>
+    <td class="title-${course.id}">${course.name}</td>
+    <td class="giatien-${course.id}">${course.giatien}</td>
+    <td "><button onclick="deleteCourses(${course.id})" class="btn btn-danger">Delete</button> <button onclick="handleEditCourse(${course.id})"class="btn btn-success">Edit</button></td>
   </tr>`;
   });
   listCourses.innerHTML = htmls.join("");
